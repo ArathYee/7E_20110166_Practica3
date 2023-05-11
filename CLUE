@@ -1,0 +1,110 @@
+import java.util.*;
+
+public class Clue {
+
+    public static void main(String[] args) {
+
+        Map<String, Room> rooms = new HashMap<>();
+        rooms.put("conservatorio", new Room("Conservatorio"));
+        rooms.put("Billar", new Room("Billar"));
+        rooms.put("Salon de baile", new Room("Salon de baile"));
+        rooms.put("Cuarto de estudio", new Room("Cuarto de estudio"));
+        rooms.put("Biblioteca", new Room("Biblioteca"));
+        rooms.put("Salon", new Room("Salon"));
+        rooms.put("Sala", new Room("Sala"));
+        rooms.put("Comedor", new Room("Comedor"));
+        rooms.put("Cocina", new Room("Cocina"));
+        rooms.put("Garage", new Room("Garage"));
+        rooms.put("Bodega", new Room("Bodega"));
+
+        List<Player> players = new ArrayList<>();
+        players.add(new Player("Miss Scarlet"));
+        players.add(new Player("Colonel Mustard"));
+        players.add(new Player("Professor Plum"));
+        players.add(new Player("Mrs. Peacock"));
+        players.add(new Player("Mr. Green"));
+        players.add(new Player("Mrs. White"));
+
+        Collections.shuffle(players);
+
+        Player currentPlayer = players.get(0);
+
+        while (true) {
+
+            for (Room room : rooms.values()) {
+                System.out.println(room);
+            }
+
+            System.out.println("It is " + currentPlayer.getName() + "'s turn.");
+
+            String move = getPlayerMove(currentPlayer);
+
+            if (move.equals("move")) {
+                System.out.println("A donde quieres ir?");
+                String direction = getInput();
+                currentPlayer.move(direction, rooms);
+            } else if (move.equals("suggest")) {
+                System.out.println("Que sugieres?");
+                String suggestion = getInput();
+                currentPlayer.suggest(suggestion, players);
+            } else if (move.equals("accuse")) {
+                System.out.println("A quien acusas?");
+                String accusation = getInput();
+                currentPlayer.accuse(accusation, players);
+            }
+
+            if (currentPlayer.hasWon()) {
+                System.out.println("Felicidades! " + currentPlayer.getName() + " gano el juego!");
+                break;
+            }
+
+            currentPlayer = players.get((players.indexOf(currentPlayer) + 1) % players.size());
+        }
+    }
+
+    private static String getPlayerMove(Player player) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+
+            System.out.println("Que quieres hacer? (Moverte, Sugerir, Acusar)");
+            String move = scanner.nextLine();
+
+            if (move.equals("move") || move.equals("suggest") || move.equals("accuse")) {
+                return move;
+            } else {
+                System.out.println("Movimiento invalido, trata de nuevo");
+            }
+        }
+    }
+
+    private static String getInput() {
+
+        Scanner scanner = new Scanner(System.in);
+
+        return scanner.nextLine();
+    }
+}
+
+class Room {
+
+    private String name;
+    private List<Player> occupants = new ArrayList<>();
+
+    public Room(String name) {
+        this.name = name;
+    }
+
+    public void addOccupant(Player player) {
+        occupants.add(player);
+    }
+
+    public void removeOccupant(Player player) {
+        occupants.remove(player);
+    }
+
+    @Override
+    public String toString() {
+        return name + " (Occupants: " + occupants + ")";
+    
